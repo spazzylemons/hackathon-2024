@@ -26,6 +26,7 @@ static bool lastPinStates[PIN_END];
 struct TicTacToeBoard {
   Square board[3][3];
   Square turn = Square::X;
+  bool firstTurn = true;
 
   void reset(void) {
     for (int x = 0; x < 3; x++) {
@@ -34,8 +35,7 @@ struct TicTacToeBoard {
       }
     }
     turn = Square::X;
-
-    Serial.print("PRINT BOARD.GCO\n");
+    firstTurn = true;
   }
 
   bool checkVictory(int x, int y, int dx, int dy) {
@@ -97,6 +97,10 @@ struct TicTacToeBoard {
       return;
 
     board[x][y] = turn;
+    if (firstTurn) {
+      Serial.print("PRINT BOARD.GCO\n");
+      firstTurn = false;
+    }
     Serial.print("PRINT ");
     Serial.print(turn == Square::X ? "X" : "O");
     Serial.print(x == 0 ? "L" : x == 1 ? "C" : "R");
