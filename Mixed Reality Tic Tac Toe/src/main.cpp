@@ -34,6 +34,8 @@ struct TicTacToeBoard {
       }
     }
     turn = Square::X;
+
+    Serial.print("PRINT BOARD.GCO\n");
   }
 
   bool checkVictory(int x, int y, int dx, int dy) {
@@ -95,6 +97,11 @@ struct TicTacToeBoard {
       return;
 
     board[x][y] = turn;
+    Serial.print("PRINT ");
+    Serial.print(turn == Square::X ? "X" : "O");
+    Serial.print(x == 0 ? "L" : x == 1 ? "C" : "R");
+    Serial.print(y == 0 ? "1" : y == 1 ? "2" : "3");
+    Serial.print(".GCO\n");
 
     // TODO send command to printer
 
