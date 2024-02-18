@@ -10,15 +10,15 @@ enum class Square {
 };
 
 static const int pinToCoord[9][3] = {
-  { 3, 0, 0 },
-  { 4, 1, 0 },
-  { 5, 2, 0 },
-  { 2, 0, 1 },
-  { 7, 1, 1 },
-  { 6, 2, 1 },
+  { 12, 0, 0 },
+  { 2, 1, 0 },
+  { 3, 2, 0 },
+  { 5, 0, 1 },
+  { 10, 1, 1 },
+  { 4, 2, 1 },
   { 8, 0, 2 },
-  { 10, 1, 2 },
-  { 12, 2, 2 },
+  { 6, 1, 2 },
+  { 7, 2, 2 },
 };
 
 static bool lastPinStates[PIN_END];
@@ -38,7 +38,7 @@ struct TicTacToeBoard {
     firstTurn = true;
   }
 
-  bool checkVictory(int x, int y, int dx, int dy) {
+  bool checkVictory(int x, int y, int dx, int dy, int wintype) {
     Square last;
 
     for (int i = 0; i < 3; i++) {
@@ -55,6 +55,10 @@ struct TicTacToeBoard {
       y += dy;
     }
 
+    Serial.print("WIN ");
+    Serial.print(wintype);
+    Serial.print("\n");
+
     return true;
   }
 
@@ -69,21 +73,21 @@ struct TicTacToeBoard {
   }
 
   bool checkAllVictory(void) {
-    if (checkVictory(0, 0, 1, 0))
+    if (checkVictory(0, 0, 1, 0, 0))
       return true;
-    if (checkVictory(0, 1, 1, 0))
+    if (checkVictory(0, 1, 1, 0, 1))
       return true;
-    if (checkVictory(0, 2, 1, 0))
+    if (checkVictory(0, 2, 1, 0, 2))
       return true;
-    if (checkVictory(0, 0, 0, 1))
+    if (checkVictory(0, 0, 0, 1, 3))
       return true;
-    if (checkVictory(1, 0, 0, 1))
+    if (checkVictory(1, 0, 0, 1, 4))
       return true;
-    if (checkVictory(2, 0, 0, 1))
+    if (checkVictory(2, 0, 0, 1, 5))
       return true;
-    if (checkVictory(0, 0, 1, 1))
+    if (checkVictory(0, 0, 1, 1, 6))
       return true;
-    if (checkVictory(2, 0, -1, 1))
+    if (checkVictory(2, 0, -1, 1, 7))
       return true;
     return false;
   }

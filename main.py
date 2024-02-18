@@ -4,6 +4,24 @@ from serial_asyncio import open_serial_connection
 PRINTER = '/dev/ttyACM0'
 ARDUINO = '/dev/ttyACM1'
 
+WIN_SEQUENCES = (
+    (b'95', b'145', b'155', b'145'),
+    (b'95', b'125', b'155', b'125'),
+    (b'95', b'105', b'155', b'105'),
+    (b'105', b'95', b'105', b'155'),
+    (b'125', b'95', b'125', b'155'),
+    (b'145', b'95', b'145', b'155'),
+    (b'95', b'155', b'155', b'95'),
+    (b'95', b'95', b'155', b'155'),
+)
+
+async def sendwin(pwriter, wintype):
+    x1, y1, x2, y2 = WIN_SEQUENCES[wintype]
+    pwriter.write(b'G0 X' + x1 + b' Y' + y1 + b' Z0.2\r\n')
+    pwriter.write(b'G0 F1500\r\n')
+    pwriter.write(b'G1 X' + x2 + b' Y' + y2 + b' Z0.2 E12.5\r\n')
+    await pwriter.drain()
+
 async def doqueries(pwriter):
     while True:
         pwriter.write(b'M27\r\n')
@@ -18,6 +36,10 @@ async def readprints(areader, queue):
             name = line.strip().split()[1]
             print(f'placing {name} into queue')
             await queue.put(name)
+        # elif line.startswith(b'WIN'):
+        #     print('got print message')
+        #     name = line.strip().split()[1]
+        #     await queue.put(int(name))
 
 async def querystatus(preader, printmsg):
     while True:
@@ -40,6 +62,10 @@ async def writeprints(pwriter, printmsg, queue):
             print('...')
             pass
         print('Sending print...')
+        # if isinstance(name, int):
+        #     await sendwin(pwriter, name)
+        #     await sleep(10.0)
+        # else:
         pwriter.write(b'M23 ' + name + b'\r\nM24\r\n')
         await pwriter.drain()
 
