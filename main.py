@@ -11,6 +11,12 @@ def run_code(ser, name):
     ser.write(b'M23 ' + name.encode() + b'.gco\r\nM24\r\n')
     ser.flush()
 
+def plot_x(ser, index):
+    run_code(ser, 'X' + names[index])
+
+def plot_o(ser, index):
+    run_code(ser, 'O' + names[index])
+
 with serial.Serial('/dev/ttyACM0', 115200) as ser:
     time.sleep(10)
 
@@ -23,8 +29,14 @@ with serial.Serial('/dev/ttyACM0', 115200) as ser:
             exit()
 
         try:
-            line = int(line) - 1
-            if 0 <= line <= 8:
-                run_code(ser, 'O' + names[line])
+            line = int(line)
+            if line < 0:
+                line = -line - 1
+                if 0 <= line <= 8:
+                    run_code(ser, 'X' + names[line])
+            else:
+                line = line - 1
+                if 0 <= line <= 8:
+                    run_code(ser, 'O' + names[line])
         except:
             pass
